@@ -9,24 +9,45 @@ namespace ASP.NET_Server_Class.Controllers
     public class CalcController : ControllerBase
     {
         [HttpPost("/sum")]
-        public ActionResult PostSum(int a, int b)
+        public ActionResult PostSum(int[] a)
         {
-            return Ok(a + b);
+            int b = 0;
+            for(int i = 0; i < a.Length; i++)
+            {
+                b += a[i];
+            }
+            return Ok(b);
         }
         [HttpPost("/sub")]
-        public ActionResult PostSub(int a, int b)
+        public ActionResult PostSub(int[] a)
         {
-            return Ok(a - b);
+            int b = 0;
+            for (int i = 0; i < a.Length; i++)
+            {
+                b -= a[i];
+            }
+            return Ok(b);
         }
         [HttpPost("/div")]
-        public ActionResult PostDiv(int a, int b)
+        public ActionResult PostDiv(int[] a)
         {
-            return Ok(a / b);
+            int b = a[0];
+           
+            for (int i = 1; i < a.Length; i++)
+            {
+                b /= a[i];
+            }
+            return Ok(b);
         }
         [HttpPost("/mul")]
-        public ActionResult PostMul(int a, int b)
+        public ActionResult PostMul(int[] a)
         {
-            return Ok(a * b);
+            int b = 1;
+            for (int i = 0; i < a.Length; i++)
+            {
+                b *= a[i];
+            }
+            return Ok(b);
         }
 
     }
