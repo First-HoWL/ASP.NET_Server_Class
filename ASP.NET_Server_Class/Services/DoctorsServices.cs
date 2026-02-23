@@ -17,6 +17,31 @@ namespace ASP.NET_Server_Class.Services
             _context.Doctors.Add(Doctor);
             _context.SaveChanges();
         }
+
+        public void Update(Doctor Doctor)
+        {
+            Doctor foundDoc = _context.Doctors.Where(d => d.Id == Doctor.Id).FirstOrDefault();
+            foundDoc.Name = Doctor.Name;
+            foundDoc.Salary = Doctor.Salary;
+            foundDoc.Surname = Doctor.Surname;
+            foundDoc.Premium = Doctor.Premium;
+            foundDoc.DepartmentId = Doctor.DepartmentId;
+
+        }
+        public bool Delete(int id)
+        {
+            Doctor foundDoc = _context.Doctors.Where(d => d.Id == id).FirstOrDefault();
+            if (foundDoc != null)
+            {
+                _context.Doctors.Remove(foundDoc);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
         
         //public List<Product> GetByIds(ProductsInOrder[]? ids)
         //{
@@ -43,7 +68,28 @@ namespace ASP.NET_Server_Class.Services
             _context.Departments.Add(Department);
             _context.SaveChanges();
         }
-        
+
+        public void Update(Department Department)
+        {
+            Department foundDep = _context.Departments.Where(d => d.Id == Department.Id).FirstOrDefault();
+            foundDep.Name = Department.Name;
+
+        }
+        public bool Delete(int id)
+        {
+            Department foundDep = _context.Departments.Where(d => d.Id == id).FirstOrDefault();
+            if (foundDep != null)
+            {
+                _context.Departments.Remove(foundDep);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
     }
 
     public class DoctorsSpecializationsService
@@ -61,6 +107,30 @@ namespace ASP.NET_Server_Class.Services
             _context.DoctorsSpecializations.Add(DoctorsSpecializations);
             _context.SaveChanges();
         }
+
+        public void Update(DoctorsSpecializations DoctorsSpecializations)
+        {
+            DoctorsSpecializations foundDoctorsSpecializations = _context.DoctorsSpecializations.Where(d => d.Id == DoctorsSpecializations.Id).FirstOrDefault();
+            foundDoctorsSpecializations.DoctorId = DoctorsSpecializations.DoctorId;
+            foundDoctorsSpecializations.SpecializationId = DoctorsSpecializations.SpecializationId;
+
+        }
+        public bool Delete(int id)
+        {
+            DoctorsSpecializations foundDoctorsSpecializations = _context.DoctorsSpecializations.Where(d => d.Id == id).FirstOrDefault();
+
+            if (foundDoctorsSpecializations != null)
+            {
+                _context.DoctorsSpecializations.Remove(foundDoctorsSpecializations);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
     }
     public class SpecializationsService
     {
@@ -77,6 +147,29 @@ namespace ASP.NET_Server_Class.Services
             _context.Specializations.Add(Specialization);
             _context.SaveChanges();
         }
+
+        public void Update(Specialization Specialization)
+        {
+            Specialization foundSpecialization = _context.Specializations.Where(d => d.Id == Specialization.Id).FirstOrDefault();
+            foundSpecialization.Name = Specialization.Name;
+
+        }
+        public bool Delete(int id)
+        {
+            Specialization foundSpecialization = _context.Specializations.Where(d => d.Id == id).FirstOrDefault();
+
+            if (foundSpecialization != null)
+            {
+                _context.Specializations.Remove(foundSpecialization);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
     }
 
 }

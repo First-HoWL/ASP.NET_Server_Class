@@ -1,6 +1,7 @@
-using ASP.NET_Server_Class.Services;
 using ASP.NET_Server_Class.Models;
+using ASP.NET_Server_Class.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace ASP.NET_Server_Class.Controllers
 {
@@ -13,11 +14,45 @@ namespace ASP.NET_Server_Class.Controllers
         private readonly DoctorsSpecializationsService _doctorsSpecializationsService;
         private readonly SpecializationsService _specializationsService;
 
+        public DoctorsController(DoctorsService doctorsService, DepartmentsService departmentsService, DoctorsSpecializationsService doctorsSpecializationsService, SpecializationsService specializationsService)
+        {
+            _doctorsService = doctorsService;
+            _departmentsService = departmentsService;
+            _specializationsService = specializationsService;
+            _doctorsSpecializationsService = doctorsSpecializationsService;
+        }
+
+        DoctorWithSpecializations getDoctor(int id)
+        {
+            Doctor doctor = _doctorsService.GetAll().Where(i => i.Id == id).FirstOrDefault();
+            Department dep = _departmentsService.GetAll().Where(i => i.Id == doctor.DepartmentId).FirstOrDefault();
+            List<DoctorsSpecializations> spec = _doctorsSpecializationsService.GetAll().Where(i => i.DoctorId == id).ToList();
+
+            List<Specialization> specializations = new List<Specialization>();
+            foreach (var item in spec)
+            {
+                specializations.Add(_specializationsService.GetAll().Where(i => i.Id == item.SpecializationId).FirstOrDefault());
+
+            }
+
+            DoctorWithSpecializations doc = new DoctorWithSpecializations(doctor, dep, specializations);
+            return doc;
+        }
+
+
+
         [HttpGet("doctors")]
         public ActionResult<List<Doctor>> GetDoctors()
         {
             return Ok(_doctorsService.GetAll());
         }
+        [HttpGet("doctor/{id}")]
+        public ActionResult<Doctor> GetDoctor(int id)
+        {
+            return Ok(getDoctor(id));
+        }
+
+
         [HttpGet("departments")]
         public ActionResult<List<Department>> GetDepartments()
         {
@@ -34,8 +69,62 @@ namespace ASP.NET_Server_Class.Controllers
             return Ok(_specializationsService.GetAll());
         }
 
+        [HttpPost("AddDepartments")]
+        public ActionResult PostAddDepartments([FromBody] Department department)
+        {
+            _departmentsService.Add(department);
+            return Ok();
+        }
+        [HttpPost("AddDoctors")]
+        public ActionResult PostAddDoctors([FromBody] Doctor doctor)
+        {
+            _doctorsService.Add(doctor);
+            return Ok();
+        }
+        [HttpPost("AddSpecialization")]
+        public ActionResult PostAddSpecializations([FromBody] Specialization specialization)
+        {
+            _specializationsService.Add(specialization);
+            return Ok();
+        }
+        [HttpPost("AddDoctorsSpecializations")]
+        public ActionResult PostAddDoctorsSpecializations([FromBody] DoctorsSpecializations doctorsSpecializations)
+        {
+            _doctorsSpecializationsService.Add(doctorsSpecializations);
+            return Ok();
+        }
+
+
+        [HttpGet("doctorsWhereSalaryMoreThan/{numb}")]
+        public ActionResult<List<Doctor>> GetDoctorsSalary(int numb)
+        {
+            List<DoctorWithSpecializations> docs = new List<DoctorWithSpecializations>();
+            _doctorsService.GetAll().Where(i => i.Salary > numb).ToList().ForEach(e => docs.Add(getDoctor(e.Id)));
+            return Ok(docs);
+        }
+
+        [HttpGet("doctorsWhereDepartment/{id}")]
+        public ActionResult<List<Doctor>> GetDoctorsDep(int id)
+        {
+            List<DoctorWithSpecializations> docs = new List<DoctorWithSpecializations>();
+            _doctorsService.GetAll().Where(i => i.DepartmentId == id).ToList().ForEach(e => docs.Add(getDoctor(e.Id)));
+            return Ok(docs);
+        }
+
+        [HttpGet("doctorsWhereSpecializations/{id}")]
+        public ActionResult<List<Doctor>> GetDoctorsSpec(int id)
+        {
+            List<DoctorWithSpecializations> docs = new List<DoctorWithSpecializations>();
+            _doctorsService.GetAll().ToList().ForEach(e => docs.Add(getDoctor(e.Id)));
+            var newdoc = docs.Where(i => i.Specializations.Contains(_specializationsService.GetAll().Where(s => s.Id == id).FirstOrDefault()));
+            return Ok(newdoc);
+        }
+
 
         
+
+
+
         //[HttpGet("orders")]
         //public ActionResult<List<Order>> GetOrders()
         //{

@@ -38,15 +38,21 @@ namespace ASP.NET_Server_Class.Models
         public string Name { get; set; }
     }
 
-    //public class OrderWithProducts : Order
-    //{
-    //    public List<Product> Products { get; set; }
-    //    public OrderWithProducts(Order order, List<Product> products)
-    //    {
-    //        Id = order.Id;
-    //        CustomerId = order.CustomerId;
-    //        TotalPrice = order.TotalPrice;
-    //        Products = products;
-    //    }
-    //}
+    public class DoctorWithSpecializations : Doctor
+    {
+        public List<Specialization> Specializations { get; set; }
+        public Department Department { get; set; }
+        public DoctorWithSpecializations(Doctor doc, Department department, List<Specialization> specializations)
+        {
+            this.Department = department;
+            this.Specializations = specializations;
+            this.Salary = doc.Salary;
+            this.Surname = doc.Surname;
+            this.Premium = doc.Premium;
+            this.Name = doc.Name;
+            this.Id = doc.Id;
+            this.DepartmentId = doc.DepartmentId;
+
+        }
+    }
 }
