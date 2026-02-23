@@ -1,4 +1,5 @@
 using ASP.NET_Server_Class;
+using ASP.NET_Server_Class.Models;
 using ASP.NET_Server_Class.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,10 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<ProductsInOrdersService>();
+builder.Services.AddScoped<DoctorsService>();
+builder.Services.AddScoped<DepartmentsService>();
+builder.Services.AddScoped<DoctorsSpecializationsService>();
+builder.Services.AddScoped<SpecializationsService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
