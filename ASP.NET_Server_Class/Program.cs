@@ -16,6 +16,16 @@ builder.Services.AddDbContext<UsersDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConection"));
 });
 
+
+builder.Services.AddCors(options => options.AddPolicy("AllowReact", policy => 
+    {
+        policy.WithOrigins("http://localhost:3000")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    }
+));
+//builder.WebHost.UseUrls("http://0.0.0.0:5000");
+
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<OrderService>();
@@ -33,6 +43,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowReact");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
