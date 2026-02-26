@@ -90,6 +90,8 @@ namespace ASP.NET_Server_Class.Controllers
             return Ok(_specializationsService.GetAll());
         }
 
+
+
         [HttpPost("AddDepartments")]
         public ActionResult PostAddDepartments([FromBody] Department department)
         {
@@ -116,88 +118,149 @@ namespace ASP.NET_Server_Class.Controllers
         }
 
 
-        [HttpGet("doctorsWhereSalaryMoreThan/{numb}")]
+
+        [HttpPut("EditDepartments")]
+        public ActionResult PutEditDepartments([FromBody] Department department)
+        {
+            _departmentsService.Update(department);
+            return Ok();
+        }
+        [HttpPut("EditDoctors")]
+        public ActionResult PutEditDoctors([FromBody] Doctor doctor)
+        {
+            _doctorsService.Update(doctor);
+            return Ok();
+        }
+        [HttpPut("EditSpecialization")]
+        public ActionResult PutEditSpecializations([FromBody] Specialization specialization)
+        {
+            _specializationsService.Update(specialization);
+            return Ok();
+        }
+        [HttpPut("EditDoctorsSpecializations")]
+        public ActionResult PutEditDoctorsSpecializations([FromBody] DoctorsSpecializations doctorsSpecializations)
+        {
+            _doctorsSpecializationsService.Update(doctorsSpecializations);
+            return Ok();
+        }
+
+
+
+        [HttpDelete("DeleteDepartments")]
+        public ActionResult DeleteDepartments([FromBody] int id)
+        {
+            _departmentsService.Delete(id);
+            return Ok();
+        }
+        [HttpDelete("DeleteDoctors")]
+        public ActionResult DeleteDoctors([FromBody] int id)
+        {
+            _doctorsService.Delete(id);
+            return Ok();
+        }
+        [HttpDelete("DeleteSpecialization")]
+        public ActionResult DeleteSpecializations([FromBody] int id)
+        {
+            _specializationsService.Delete(id);
+            return Ok();
+        }
+        [HttpDelete("DeleteDoctorsSpecializations")]
+        public ActionResult DeleteDoctorsSpecializations([FromBody] int id)
+        {
+            _doctorsSpecializationsService.Delete(id);
+            return Ok();
+        }
+
+
+
+        [HttpGet("salary-above/{numb}")]
         public ActionResult<List<Doctor>> GetDoctorsSalary(int numb)
         {
+            if (numb <= 0)
+                return BadRequest();
             List<DoctorWithSpecializations> docs = new List<DoctorWithSpecializations>();
             _doctorsService.GetAll().Where(i => i.Salary > numb).ToList().ForEach(e => docs.Add(getDoctor(e.Id)));
+            if (docs == null || docs.Count == 0 )
+                return NotFound();
             return Ok(docs);
         }
 
-        [HttpGet("doctorsWhereDepartment/{id}")]
+        [HttpGet("by-department/{id}")]
         public ActionResult<List<Doctor>> GetDoctorsDep(int id)
         {
+            if (id <= 0)
+                return BadRequest();
+            if (_departmentsService.GetAll().Where(i => i.Id == id).FirstOrDefault() == null)
+                return NotFound();
             List<DoctorWithSpecializations> docs = new List<DoctorWithSpecializations>();
             _doctorsService.GetAll().Where(i => i.DepartmentId == id).ToList().ForEach(e => docs.Add(getDoctor(e.Id)));
+            if (docs == null || docs.Count == 0)
+                return NotFound();
             return Ok(docs);
         }
 
-        [HttpGet("doctorsWhereSpecializations/{id}")]
+        [HttpGet("by-specialization/{id}")]
         public ActionResult<List<Doctor>> GetDoctorsSpec(int id)
         {
+            if (id <= 0)
+                return BadRequest();
+            if (_specializationsService.GetAll().Where(i => i.Id == id).FirstOrDefault() == null)
+                return NotFound();
             List<DoctorWithSpecializations> docs = new List<DoctorWithSpecializations>();
             _doctorsService.GetAll().ToList().ForEach(e => docs.Add(getDoctor(e.Id)));
-            var newdoc = docs.Where(i => i.Specializations.Contains(_specializationsService.GetAll().Where(s => s.Id == id).FirstOrDefault()));
-            return Ok(newdoc);
+            docs = docs.Where(i => i.Specializations.Contains(_specializationsService.GetAll().Where(s => s.Id == id).FirstOrDefault())).ToList();
+
+            if (docs == null || docs.Count == 0)
+                return NotFound();
+            return Ok(docs);
+        }
+
+        [HttpGet("with-doctor-count")]
+        public ActionResult<List<Specialization>> GetSpecializationsWithDoctorCount()
+        {
+            List<SpecializationWithDoctorCount> spec = new List<SpecializationWithDoctorCount>();
+            _specializationsService.GetAll().ToList().ForEach(e => spec.Add(new SpecializationWithDoctorCount(_doctorsSpecializationsService.GetAll().Where(i => i.SpecializationId == e.Id).ToList().Count, e)));
+
+            if (spec == null || spec.Count == 0)
+                return NotFound();
+            return Ok(spec);
+        }
+
+        double totalExpenses(Department e)
+        {
+            double total = 0;
+            _doctorsService.GetAll().Where(i => i.DepartmentId == e.Id).ToList().ForEach(d => total += (d.Salary + d.Premium));
+            return total;
+        }
+        double averageSalary(Department e)
+        {
+            double total = 0;
+            _doctorsService.GetAll().Where(i => i.DepartmentId == e.Id).ToList().ForEach(d => total += d.Salary);
+            return total / _doctorsService.GetAll().Where(i => i.DepartmentId == e.Id).ToList().Count;
+
+        }
+
+        [HttpGet("statistics")]
+        public ActionResult<List<Doctor>> GetDepStatistics()
+        {
+            List<DepartmentStatistic> dep = new List<DepartmentStatistic>();
+            _departmentsService.GetAll().ToList().ForEach(e => dep.Add(
+                new DepartmentStatistic(
+                    e,
+                    totalExpenses(e),
+                    averageSalary(e),
+                    _doctorsService.GetAll().Where(i => i.DepartmentId == e.Id).ToList().Count)));
+
+            if (dep == null || dep.Count == 0)
+                return NotFound();
+            Console.WriteLine(dep);
+            return Ok(dep);
         }
 
 
-        
 
 
 
-        //[HttpGet("orders")]
-        //public ActionResult<List<Order>> GetOrders()
-        //{
-        //    return Ok(_orderService.GetAll());
-        //}
-        //[HttpGet("productsInOrder/{id}")]
-        //public ActionResult<OrderWithProducts> GetproductsInOrder(int id)
-        //{
-        //    if (_orderService.GetAll().Where(i => i.Id == id) == null)
-        //    {
-        //        return BadRequest();
-        //    }
 
-        //    return Ok(new OrderWithProducts(
-        //        _orderService.GetAll().Where(i => i.Id == id).FirstOrDefault(),
-        //        _productService.GetByIds(
-        //            _productsInOrdersService.GetAll().Where(i => i.OrderId == id).ToArray()
-        //            )
-        //        )
-        //    );
-        //}
-        //[HttpPost("AddProduct")]
-        //public ActionResult AddProduct([FromBody] Product product)
-        //{
-        //    _productService.Add(product);
-        //    return Ok();
-        //}
-        //[HttpPost("AddOrder")]
-        //public ActionResult AddOrder([FromBody] Order order)
-        //{
-        //    if (_userService.GetAll().Where(i => i.Id == order.CustomerId) == null)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    _orderService.Add(order);
-        //    return Ok();
-        //}
-        //[HttpPost("AddProductToOrder")]
-        //public ActionResult AddProductToOrder([FromBody] ProductsInOrder productsInOrder)
-        //{
-        //    if (_productService.GetAll().Where(i => i.Id == productsInOrder.ProductId).FirstOrDefault() != null && _orderService.GetAll().Where(i => i.Id == productsInOrder.OrderId).FirstOrDefault() != null)
-        //    {
-        //        _productsInOrdersService.Add(productsInOrder);
-        //        _orderService.GetAll().Where(i => i.Id == productsInOrder.OrderId).FirstOrDefault().TotalPrice += _productService.GetAll().Where(i => i.Id == productsInOrder.ProductId).FirstOrDefault().Price;
-        //        _productService.GetAll().Where(i => i.Id == productsInOrder.ProductId).FirstOrDefault().Stock -= 1;
-        //        return Ok();
-        //    }
-        //    else
-        //    {
-        //        return BadRequest();
-        //    }
-        //}
     }
 }

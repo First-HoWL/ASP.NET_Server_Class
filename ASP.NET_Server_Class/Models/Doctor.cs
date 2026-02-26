@@ -55,4 +55,30 @@ namespace ASP.NET_Server_Class.Models
 
         }
     }
+
+    public class SpecializationWithDoctorCount : Specialization
+    {
+        public int doctorsCount { get; set; }
+        public SpecializationWithDoctorCount(int count, Specialization specialization)
+        {
+            this.doctorsCount = count;
+            this.Name = specialization.Name;
+            this.Id = specialization.Id;
+        }
+    }
+
+    public class DepartmentStatistic : Department
+    {
+        public double totalExpenses { get; set; }
+        public double averageSalary { get; set; }
+        public int doctorCount { get; set; }
+        public DepartmentStatistic(Department dep, double totalExpenses, double averageSalary, int doctorCount)
+        {
+            this.averageSalary = averageSalary;
+            this.doctorCount = doctorCount;
+            this.totalExpenses = totalExpenses;
+            this.Id= dep.Id;
+            this.Name= dep.Name;
+        }
+    }
 }
