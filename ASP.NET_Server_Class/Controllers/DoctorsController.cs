@@ -52,6 +52,27 @@ namespace ASP.NET_Server_Class.Controllers
             return Ok(getDoctor(id));
         }
 
+        [HttpGet("paged/{page}")]
+        public ActionResult<List<Doctor>> GetUsersPages(int page, int size = 2)
+        {
+            var doctors = _doctorsService.GetAll();
+
+            if (page > doctors.Count / size || page < 1)
+                return BadRequest();
+
+            if (size < 1)
+                return BadRequest();
+
+            return Ok(new PagedResult<Doctor>()
+            {
+                Items = doctors.GetRange((page - 1) * size, size),
+                TotalCount = doctors.Count,
+                Page = page,
+                PagesCount = doctors.Count / size,
+                PageSize = size
+
+            });
+        }
 
         [HttpGet("departments")]
         public ActionResult<List<Department>> GetDepartments()
