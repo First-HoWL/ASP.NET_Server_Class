@@ -53,22 +53,16 @@ namespace ASP.NET_Server_Class.Controllers
         }
 
         [HttpGet("paged/{page}")]
-        public ActionResult<List<Doctor>> GetUsersPages(int page, int size = 2)
+        public ActionResult<List<Doctor>> GetUsersPages(int page = 1, int size = 5)
         {
             var doctors = _doctorsService.GetAll();
 
-            if (page > doctors.Count / size || page < 1)
-                return BadRequest();
-
-            if (size < 1)
-                return BadRequest();
-
             return Ok(new PagedResult<Doctor>()
             {
-                Items = doctors.GetRange((page - 1) * size, size),
+                Items = doctors.GetRange((page - 1) * size, Math.Min(doctors.Count - (page - 1) * size, size)),
                 TotalCount = doctors.Count,
                 Page = page,
-                PagesCount = doctors.Count / size,
+                PagesCount = Convert.ToInt32(Math.Ceiling((double)doctors.Count / size)),
                 PageSize = size
 
             });
