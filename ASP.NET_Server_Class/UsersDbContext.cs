@@ -13,7 +13,7 @@ namespace ASP.NET_Server_Class
         //public DbSet<DoctorsSpecializations> DoctorsSpecializations { get; set; }
         //public DbSet<Specialization> Specializations { get; set; }
         //public DbSet<Department> Departments { get; set; }
-
+        public DbSet<Field> Fields {  get; set; }
 
         public UsersDbContext(DbContextOptions<UsersDbContext> options) : base(options) { }
 

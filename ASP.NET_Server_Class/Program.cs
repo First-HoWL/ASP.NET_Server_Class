@@ -1,6 +1,8 @@
 using ASP.NET_Server_Class;
 using ASP.NET_Server_Class.Models;
 using ASP.NET_Server_Class.Services;
+
+//using ASP.NET_Server_Class.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +36,7 @@ builder.Services.AddCors(options => options.AddPolicy("AllowReact", policy =>
 //builder.Services.AddScoped<DepartmentsService>();
 //builder.Services.AddScoped<DoctorsSpecializationsService>();
 //builder.Services.AddScoped<SpecializationsService>();
+builder.Services.AddScoped<FieldService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
