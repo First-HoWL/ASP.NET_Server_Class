@@ -149,8 +149,10 @@ namespace ASP.NET_Server_Class.Controllers
         [HttpDelete("DeleteDoctors")]
         public ActionResult DeleteDoctors([FromBody] int id)
         {
-            _doctorsService.Delete(id);
-            return Ok();
+            bool answer = _doctorsService.Delete(id);
+            if (answer == true)
+                return Ok();
+            else return BadRequest();
         }
         [HttpDelete("DeleteSpecialization")]
         public ActionResult DeleteSpecializations([FromBody] int id)

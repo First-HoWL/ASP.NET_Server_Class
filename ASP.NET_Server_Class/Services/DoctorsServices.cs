@@ -30,15 +30,15 @@ namespace ASP.NET_Server_Class.Services
         }
         public bool Delete(int id)
         {
-            Doctor foundDoc = _context.Doctors.Where(d => d.Id == id).FirstOrDefault();
-            if (foundDoc != null)
+            Doctor? foundDoc = _context.Doctors.Where(d => d.Id == id).FirstOrDefault();
+            if (foundDoc is null)
             {
-                _context.Doctors.Remove(foundDoc);
-                return true;
+                return false;
             }
             else
             {
-                return false;
+                _context.Doctors.Remove(foundDoc);
+                return true;
             }
 
         }
