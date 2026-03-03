@@ -26,14 +26,14 @@ builder.Services.AddCors(options => options.AddPolicy("AllowReact", policy =>
 ));
 //builder.WebHost.UseUrls("http://0.0.0.0:5000");
 
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<ProductService>();
-builder.Services.AddScoped<OrderService>();
-builder.Services.AddScoped<ProductsInOrdersService>();
-builder.Services.AddScoped<DoctorsService>();
-builder.Services.AddScoped<DepartmentsService>();
-builder.Services.AddScoped<DoctorsSpecializationsService>();
-builder.Services.AddScoped<SpecializationsService>();
+//builder.Services.AddScoped<UserService>();
+//builder.Services.AddScoped<ProductService>();
+//builder.Services.AddScoped<OrderService>();
+//builder.Services.AddScoped<ProductsInOrdersService>();
+//builder.Services.AddScoped<DoctorsService>();
+//builder.Services.AddScoped<DepartmentsService>();
+//builder.Services.AddScoped<DoctorsSpecializationsService>();
+//builder.Services.AddScoped<SpecializationsService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
