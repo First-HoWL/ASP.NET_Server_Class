@@ -16,4 +16,10 @@ namespace ASP.NET_Server_Class.Models
         public int Mines {  get; set; }
         
     }
+    public class AnswerField()
+    {
+        public string[][] field {  get; set; }
+        public bool isLose { get; set; }
+        public bool isWin { get; set; }
+    }
 }
