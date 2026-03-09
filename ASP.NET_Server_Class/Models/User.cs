@@ -12,6 +12,13 @@ namespace ASP.NET_Server_Class.Models
         public string Email { get; set; }
         public DateOnly Birthday { get; set; }
         public string Gender { get; set; }
+        public string PasswordHash { get; set; }
+        public string PasswordSalt { get; set; }
+    }
+    public class UserLoginDTO
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 
 }

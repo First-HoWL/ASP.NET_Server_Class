@@ -57,8 +57,6 @@ namespace ASP.NET_Server_Class.Controllers
         [HttpPost("move")]
         public ActionResult<Field> PostMove(int id, int x, int y)
         {
-            
-
             Field? field = _fieldService.GetAll().Where(i => i.Id == id).FirstOrDefault();
             string[][] newField;
             string[][] newField2 = new string[field.SizeY][];
