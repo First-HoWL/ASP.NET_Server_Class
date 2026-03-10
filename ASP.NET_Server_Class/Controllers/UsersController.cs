@@ -21,6 +21,13 @@ namespace ASP.NET_Server_Class.Controllers
         {
             return Ok(_userService.GetAll());
         }
+        [Authorize]
+        [HttpGet("me")]
+        public ActionResult<User> GetMe()
+        {
+            return Ok();
+        }
+
         [HttpPost]
         public ActionResult AddUser([FromBody] User user)
         {
