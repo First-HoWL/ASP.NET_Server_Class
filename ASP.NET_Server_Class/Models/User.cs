@@ -13,7 +13,8 @@ namespace ASP.NET_Server_Class.Models
         public DateOnly Birthday { get; set; }
         public string Gender { get; set; }
         public string PasswordHash { get; set; }
-        public string PasswordSalt { get; set; }
+        public string Role { get; set; } = "User";
+
     }
     public class UserLoginDTO
     {

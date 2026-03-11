@@ -18,12 +18,30 @@ namespace ASP.NET_Server_Class.Services
             _context.SaveChanges();
         }
         public void Register(User user) {
-            string salt = BCrypt.Net.BCrypt.GenerateSalt();
-            user.PasswordSalt = salt;
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash, salt);
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash, BCrypt.Net.BCrypt.GenerateSalt());
             Add(user);
 
         }
+
+        public void Update(User user)
+        {
+            User? foundUser = _context.Users.Where(d => d.Id == user.Id).FirstOrDefault();
+            if (foundUser != null)
+            {
+                foundUser.Name = user.Name;
+                foundUser.Birthday = user.Birthday;
+                foundUser.Email = user.Email;
+                foundUser.Gender = user.Gender;
+                foundUser.Role = user.Role;
+                if (foundUser.PasswordHash != user.PasswordHash)
+                {
+                    foundUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash, BCrypt.Net.BCrypt.GenerateSalt());
+                }
+
+                _context.SaveChanges();
+            }
+        }
+
         public User? ValidateUser(UserLoginDTO credentials)
         {
             var user = _context.Users.FirstOrDefault(u => u.Email == credentials.Email);
