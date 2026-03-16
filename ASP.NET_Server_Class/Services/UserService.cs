@@ -23,6 +23,21 @@ namespace ASP.NET_Server_Class.Services
 
         }
 
+        public bool Delete(int id)
+        {
+            User? user = _context.Users.Where(i => i.Id == id).FirstOrDefault();
+            if (user == null)
+            {
+                return false;
+            }
+            else
+            {
+                _context.Remove(user);
+            }
+            _context.SaveChanges();
+            return true;
+        }
+
         public void Update(User user)
         {
             User? foundUser = _context.Users.Where(d => d.Id == user.Id).FirstOrDefault();
