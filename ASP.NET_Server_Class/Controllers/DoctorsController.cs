@@ -169,6 +169,19 @@ namespace ASP.NET_Server_Class.Controllers
 
 
 
+
+
+
+
+
+
+
+
+        // Homework
+
+
+
+
         [HttpGet("salary-above/{numb}")]
         public ActionResult<List<Doctor>> GetDoctorsSalary(int numb)
         {
@@ -211,7 +224,7 @@ namespace ASP.NET_Server_Class.Controllers
             return Ok(docs);
         }
 
-        [HttpGet("with-doctor-count")]
+        [HttpGet("specializations/with-doctor-count")]
         public ActionResult<List<Specialization>> GetSpecializationsWithDoctorCount()
         {
             List<SpecializationWithDoctorCount> spec = new List<SpecializationWithDoctorCount>();
@@ -232,12 +245,15 @@ namespace ASP.NET_Server_Class.Controllers
         {
             double total = 0;
             _doctorsService.GetAll().Where(i => i.DepartmentId == e.Id).ToList().ForEach(d => total += d.Salary);
-            return total / _doctorsService.GetAll().Where(i => i.DepartmentId == e.Id).ToList().Count;
+            if (total == 0)
+                return 0;
+            else
+                return total / _doctorsService.GetAll().Where(i => i.DepartmentId == e.Id).ToList().Count;
 
         }
 
         [HttpGet("statistics")]
-        public ActionResult<List<Doctor>> GetDepStatistics()
+        public ActionResult<List<DepartmentStatistic>> GetDepStatistics()
         {
             List<DepartmentStatistic> dep = new List<DepartmentStatistic>();
             _departmentsService.GetAll().ToList().ForEach(e => dep.Add(
@@ -253,9 +269,62 @@ namespace ASP.NET_Server_Class.Controllers
             return Ok(dep);
         }
 
+        [HttpGet("{departmentId}/above-average")]
+        public ActionResult<List<Doctor>> GetDoctorsSalaryAbove(int departmentId)
+        {
+            if (departmentId <= 0)
+                return BadRequest();
+            Department? department = _departmentsService.GetAll().Where(d => d.Id == departmentId).FirstOrDefault();
+            if (department == null)
+                return NotFound();
+            double avgSalary = 0;
+            List<Doctor> docs = _doctorsService.GetAll().Where(d => d.DepartmentId == departmentId).ToList();
+            if(docs == null || docs.Count == 0)
+            {
+                return NotFound();
+            }
+            docs.ForEach(e => avgSalary += e.Salary);
+            avgSalary /= docs.Count;
+
+            List<Doctor> correctdocs = docs.Where(d => d.Salary >= avgSalary).ToList();
+
+            return Ok(correctdocs);
+        }
 
 
+        [HttpGet("departments/with-specializations")]
+        public ActionResult<List<Doctor>> GetDepartmentsWithSpecializations()
+        {
+            List<Department> department = _departmentsService.GetAll();
+            if (department == null)
+                return NotFound();
 
+            List<DepartmentWithSpecialization> dep = new List<DepartmentWithSpecialization>();
+            department.ForEach(e =>
+            {
+                List<Specialization> spec = new List<Specialization>();
+                _doctorsService.GetAll().Where(i => i.DepartmentId == e.Id).ToList().ForEach(d =>
+                {
+                    _doctorsSpecializationsService.GetAll().Where(i => i.DoctorId == d.Id).ToList().ForEach(i =>
+                    {
+                        Specialization? sp = _specializationsService.GetAll().Where(s => s.Id == i.SpecializationId).FirstOrDefault();
+                        if(sp != null) {
+                            if (!spec.Contains(sp))
+                            {
+                                spec.Add(sp);
+                            }
+                        }
+                    });
+
+                });
+                dep.Add(new DepartmentWithSpecialization(e, spec));
+            });
+            if (dep == null || dep.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(dep);
+        }
 
 
     }

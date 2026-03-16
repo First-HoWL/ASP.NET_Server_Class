@@ -26,7 +26,7 @@ namespace ASP.NET_Server_Class.Services
             foundDoc.Surname = Doctor.Surname;
             foundDoc.Premium = Doctor.Premium;
             foundDoc.DepartmentId = Doctor.DepartmentId;
-
+            _context.SaveChanges();
         }
         public bool Delete(int id)
         {
@@ -38,8 +38,11 @@ namespace ASP.NET_Server_Class.Services
             else
             {
                 _context.Doctors.Remove(foundDoc);
+                _context.SaveChanges();
+
                 return true;
             }
+
 
         }
         

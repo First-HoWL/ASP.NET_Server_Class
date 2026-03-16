@@ -81,4 +81,14 @@ namespace ASP.NET_Server_Class.Models
             this.Name= dep.Name;
         }
     }
+    public class DepartmentWithSpecialization : Department
+    {
+        public List<Specialization> Specializations { get; set; }
+        public DepartmentWithSpecialization(Department dep, List<Specialization> specializations)
+        {
+            this.Id = dep.Id;
+            this.Name = dep.Name;
+            Specializations = specializations;
+        }
+    }
 }
