@@ -56,6 +56,16 @@ namespace ASP.NET_Server_Class.Controllers
             _userService.Update(user);
             return Ok();
         }
+        [Authorize(Roles = "admin")]
+        [HttpDelete("Delete")]
+        public ActionResult DeleteUser(int id)
+        {
+            bool answer = _userService.Delete(id);
+            if (answer == true)
+                return Ok();
+            else
+                return NotFound();
+        }
 
         [Authorize]
         [HttpGet("paged/{page}")]
