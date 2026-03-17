@@ -57,7 +57,7 @@ namespace ASP.NET_Server_Class.Controllers
             return Ok();
         }
         [Authorize(Roles = "admin")]
-        [HttpDelete("Delete")]
+        [HttpDelete("Delete/{id}")]
         public ActionResult DeleteUser(int id)
         {
             bool answer = _userService.Delete(id);
@@ -102,8 +102,40 @@ namespace ASP.NET_Server_Class.Controllers
             var user = _userService.ValidateUser(credentials);
             if (user == null)
                 return Unauthorized();
-            var token = _tokenService.GenerateToken(user);
-            return Ok(token);
+            var (AccessToken, RefreshToken) = _tokenService.GenerateTokens(user);
+
+            return Ok(new
+            {
+                AccessToken = AccessToken,
+                RefreshToken = RefreshToken
+            });
         }
+        [HttpGet("Tokens")]
+        public ActionResult<List<RefreshToken>> GetTokens()
+        {
+            return Ok(_tokenService.GetAll());
+        }
+
+        [HttpPost("refresh")]
+        public ActionResult refreshJWT([FromBody] string refreshToken)
+        {
+            Console.WriteLine(refreshToken + "\n");
+            var refreshSession = _tokenService.GetRefreshToken(refreshToken);
+            if (refreshSession == null || refreshSession.ExpirationDate < DateTime.UtcNow)
+                return Unauthorized();
+
+            var user = _userService.GetAll().Where(i => i.Id == refreshSession.UserId).FirstOrDefault();
+            if(user == null)
+                return NotFound();
+
+            var (AccessToken, RefreshToken) = _tokenService.GenerateTokens(user);
+
+            return Ok(new
+            {
+                AccessToken = AccessToken,
+                RefreshToken = RefreshToken
+            });
+        }
+
     }
 }

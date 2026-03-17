@@ -4,7 +4,7 @@ namespace ASP.NET_Server_Class.Services
 {
     public class UserService
     {
-        public readonly UsersDbContext _context;
+        private readonly UsersDbContext _context;
 
         public UserService(UsersDbContext context)
         {
@@ -33,9 +33,10 @@ namespace ASP.NET_Server_Class.Services
             else
             {
                 _context.Remove(user);
+                _context.SaveChanges();
+                return true;
             }
-            _context.SaveChanges();
-            return true;
+            
         }
 
         public void Update(User user)
